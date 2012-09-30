@@ -66,7 +66,7 @@ class AlarmLogic extends JFrame implements Runnable{
 			for(int i=0; i<alarmlist.size();i++){
 				if(this.checkAlarmList(i, currdate, currtime)){
 					alarmlist.remove(i);
-					JOptionPane.showMessageDialog(null, "Alarm Ring!!");
+//					JOptionPane.showMessageDialog(null, "Alarm Ring!!");
 					continue;
 				}
 			}
@@ -101,7 +101,7 @@ class GUI extends JFrame implements ActionListener{
 
 	GUI(){
 		this.setSize (400, 400);
-		this.setTitle("Alarm - Beta");
+		this.setTitle("Alarm App");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.createUI();
 	}
