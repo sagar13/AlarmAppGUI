@@ -15,38 +15,23 @@ class Alarm{
 	}
 }
 
+class GetCurrTime{
+	Calendar currTime;
+	String timeString;	
+
+	GetCurrTime(){
+		currTime = Calendar.getInstance();
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy/M/d H:m");
+		timeString=formatter.format(currTime.getTime());
+	}
+	String getTimestr(){
+		return timeString;	
+	}
+}
+
 class AlarmLogic extends JFrame implements Runnable{
 	ArrayList<Alarm> alarmlist = new ArrayList<Alarm>();
-	String currdate[], currtime[];
-	Date date;
-	DateFormat datef = new SimpleDateFormat("dd/MM/yyyy");
-	DateFormat timef = new SimpleDateFormat("HH:mm:ss");
-	
-	AlarmLogic(){
-		date = new Date();
-		currdate = (datef.format(date)).split("/");
-		currtime = (timef.format(date)).split(":");
-	}
-
-	public int getDay() {
-		return Integer.parseInt(currdate[0]);
-	}
-
-	public int getMonth() {
-		return Integer.parseInt(currdate[1]);
-	}
-	
-	public int getYear() {
-		return Integer.parseInt(currdate[2]);
-	}
-	
-	public int getHours() {
-		return Integer.parseInt(currtime[0]);
-	}
-	
-	public int getMinutes() {
-		return Integer.parseInt(currtime[1]);
-	}
+	GetCurrTime timeobj;
 
 	void AddAlarm(Alarm a){
 		alarmlist.add(a);
@@ -57,35 +42,34 @@ class AlarmLogic extends JFrame implements Runnable{
 		t.start();
 	}
 
+	@Override
 	public void run(){
-		try{	
 		while(true){
-			date = new Date();
-			currdate = (datef.format(date)).split("/");
-			currtime = (timef.format(date)).split(":");
-			for(int i=0; i<alarmlist.size();i++){
-				if(this.checkAlarmList(i, currdate, currtime)){
+			timeobj = new GetCurrTime();
+			for(int i=0; i<alarmlist.size(); i++){
+				if(this.checkAlarmList(i, timeobj.getTimestr())){
 					alarmlist.remove(i);
-//					JOptionPane.showMessageDialog(null, "Alarm Ring!!");
+					JOptionPane.showMessageDialog(null, "Alarm Ring!!");
 					continue;
 				}
 			}
-			Thread.sleep((60 - Integer.parseInt(currtime[2])) * 1000);
-		}
-		}catch(Exception e){
-			System.out.println("Exception found: " + e);
 		}
 	}
 
-	boolean checkAlarmList(int index, String currdate[], String currtime[]){
+	boolean checkAlarmList(int index, String sysTime){
 		boolean ans = false;
-		if(alarmlist.get(index).day == Integer.parseInt(currdate[0]) &&
-		   alarmlist.get(index).month == Integer.parseInt(currdate[1]) &&
-		   alarmlist.get(index).year == Integer.parseInt(currdate[2]) &&
-		   alarmlist.get(index).hour == Integer.parseInt(currtime[0]) &&
-		   alarmlist.get(index).minute == Integer.parseInt(currtime[1])){
-							ans = true;
-						}
+		String timestr, day, month, year, hour, minute;
+		
+		day = Integer.toString(alarmlist.get(index).day);
+		month = Integer.toString(alarmlist.get(index).month);
+		year = Integer.toString(alarmlist.get(index).year);
+		hour = Integer.toString(alarmlist.get(index).hour);
+		minute = Integer.toString(alarmlist.get(index).minute);
+		timestr = year + "/" + month + "/" + day + " " + hour + ":" + minute;
+		
+		if (timestr.equals(sysTime)){
+			ans = true;
+		}
 		return(ans);
 	}
 	
@@ -112,27 +96,22 @@ class GUI extends JFrame implements ActionListener{
 		day = new JComboBox();
 		for(int i=1; i<=31; i++)
 			day.addItem(i);
-		day.setSelectedItem(alogic.getDay());
 		
 		month = new JComboBox();
 		for(int i=1; i<=12; i++)
 			month.addItem(i);
-		month.setSelectedItem(alogic.getMonth());
 		
 		year = new JComboBox();
 		for(int i=2012; i<=2012; i++)
 			year.addItem(i);
-		year.setSelectedItem(alogic.getYear());
 		
 		hour = new JComboBox();
-		for(int i=1; i<=24; i++)
+		for(int i=0; i<=23; i++)
 			hour.addItem(i);
-		hour.setSelectedItem(alogic.getHours());
 		
 		minute = new JComboBox();
-		for(int i=1; i<=59; i++)
+		for(int i=0; i<=59; i++)
 			minute.addItem(i);
-		minute.setSelectedItem(alogic.getMinutes());
 		
 		addAlarm = new JButton("Set Alarm");
 		
